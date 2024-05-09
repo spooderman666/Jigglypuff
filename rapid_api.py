@@ -3,9 +3,6 @@ import shutil
 from datetime import datetime, timedelta
 from youtube_upload import upload_video
 
-# echochrimson@gmail.com
-# 4am@G8g9v2%LMw
-absolute_path = '/home/vector/vsCode/jigglypuff/'
 today = datetime.now().date()
 yesterday = today - timedelta(days=1)
 with open('log.txt', 'w') as f:
