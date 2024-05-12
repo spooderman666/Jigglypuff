@@ -4,13 +4,37 @@ from datetime import datetime, timedelta
 from youtube_upload import upload_video
 
 today = datetime.now().date()
+hour = datetime.now().hour
 yesterday = today - timedelta(days=1)
 with open('log.txt', 'w') as f:
     f.write(str(datetime.now()))
 
+news_topics = ['&q=russia and ukraine', '&q=middle east',  '']
+entertainment_topics = ['&q=hollywood', '&q=upcoming movies',  '']
+tech_topics = ['&q=artificial intelligence', '&q=electric vehicles',  '']
+if(hour == 6):
+    news_topic = news_topics[0]
+    entertainment_topic = entertainment_topics[0]
+    tech_topic = tech_topics[0]
+elif(hour == 12):
+    news_topic = news_topics[1]
+    entertainment_topic = entertainment_topics[1]
+    tech_topic = tech_topics[1]
+else:
+    news_topic = news_topics[2]
+    entertainment_topic = entertainment_topics[2]
+    tech_topic = tech_topics[2]
+
+global_query = 'https://newsdata.io/api/1/news?apikey=pub_43968e5821025873d5aabb7307cf3cbd37046' + news_topic + '&country=au,ca,gb,us&category=politics,world,top'
+entertainment_query = 'https://newsdata.io/api/1/news?apikey=pub_43968e5821025873d5aabb7307cf3cbd37046' + entertainment_topic + '&country=us,uk&category=entertainment,top'
+tech_query = 'https://newsdata.io/api/1/news?apikey=pub_43968e5821025873d5aabb7307cf3cbd37046' + tech_topic + '&country=au,ca,gb,us&category=science,technology,top'
+print(global_query)
+print(entertainment_query)
+print(tech_query)
+
 # Healine search, yt category, playlist id
-cat_list = [['Global News', 'current events', 'PLPbMNnQbsm470OCS_BEpyBfUIaEp7OXLs'], ['Trending Entertainment', 'entertainment', 'PLPbMNnQbsm45zQrO_YJx8WdLHSZK6ZD7W'], 
-            ['Trending Technology', 'technology', 'PLPbMNnQbsm45AZufdiRnjikkx8FZn5Lk8']]
+cat_list = [['Global News', 'current events', 'PLPbMNnQbsm470OCS_BEpyBfUIaEp7OXLs', global_query], ['Trending Entertainment', 'entertainment', 'PLPbMNnQbsm45zQrO_YJx8WdLHSZK6ZD7W', entertainment_query], 
+            ['Trending Technology', 'technology', 'PLPbMNnQbsm45AZufdiRnjikkx8FZn5Lk8', tech_query]]
 
 #################################
 # Search for top headlines
@@ -66,32 +90,36 @@ def get_news():
             f.write('\nGoogle News error')
 
     ##################
-    # API-LAYER NEWS
+    # NEWS_DATA
     ##################
-    url = "https://api.apilayer.com/world_news/search-news?text=" + item[1] + "&earliest-publish-date=" + str(yesterday) + "&source-countries=US,AU,CA,UK,NZ"
-    print(url)
-    payload = {}
-    headers= {
-    "apikey": "hkcLiwIF4sAC8CMJgAimff4pFDURRAY4"
-    }
-    response = requests.request("GET", url, headers=headers, data = payload)
+    response = requests.get(item[3])
     result = response.json()
 
     with open('test.json', 'w') as f:
         f.write(response.text)
     try:
-        title = str(today) + ': ' + item[0] + ", " + result['news'][0]['title']
-        article = result['news'][0]['url']
-        if('author' in result['news'][0]):
-            author = result['news'][0]['author']
+        title = str(today) + ': ' + item[0] + ", " + result['results'][0]['title']
+        article = result['results'][0]['link']
+        # Save article author
+        if('creator' in result['results'][0]):
+            if(result['results'][0]['creator'] is None):
+                author = 'Author Unknown'
+            else:
+                author = result['results'][0]['creator'][0]
+        # Save keywords for video tags
+        if('keywords' in result['results'][0]):
+            if(result['results'][0]['keywords'] is None):
+                tags = ['technology']
+            else:
+                tags = result['results'][0]['keywords']
         else:
             author = 'Author Unknown'
-        summary = result['news'][0]['summary']
-        return([title, article, author])
+        summary = result['results'][0]['description']
+        return([title, article, author, tags])
     except:
-        print('\nAPI-Layer News error')
+        print('\nNEWS_DATA error')
         with open('log.txt', 'w') as f:
-            f.write('\nAPI-Layer News error')
+            f.write('\nNEWS_DATA error')
         return(['Error'])
 
 ###########################
@@ -170,6 +198,7 @@ for item in cat_list:
         title = news_resp[0]
         article = news_resp[1]
         author = news_resp[2]
+        tags = news_resp[3]
 
         with open('log.txt', 'a') as f:
             f.write('\nSummarizing. . .')
@@ -185,7 +214,9 @@ for item in cat_list:
         if(len(tiktok_resp) > 1):
             description = tiktok_resp[0]
             vid_name = tiktok_resp[1]
-            upload_video(title=title, description=description, category='technology', vid_name=vid_name, playlist_id=item[2])
+            print(title)
+            print(description)
+            upload_video(title=title, description=description, category='technology', vid_name=vid_name, playlist_id=item[2], tags=tags)
 
     
 

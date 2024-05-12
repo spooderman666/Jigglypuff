@@ -1,8 +1,7 @@
 from simple_youtube_api.Channel import Channel
 from simple_youtube_api.LocalVideo import LocalVideo
 
-
-def upload_video(title, description, category, vid_name, playlist_id): 
+def upload_video(title, description, category, vid_name, playlist_id, tags): 
     print('Uploading. . .')
     # loggin into the channel
     channel = Channel()
