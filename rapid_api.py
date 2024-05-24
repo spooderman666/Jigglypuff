@@ -3,6 +3,7 @@ import shutil
 from datetime import datetime, timedelta
 from youtube_upload import upload_video
 
+absolute_path = '/home/vector/vsCode/jigglypuff/'
 today = datetime.now().date()
 hour = datetime.now().hour
 yesterday = today - timedelta(days=1)
@@ -26,11 +27,11 @@ else:
     tech_topic = tech_topics[2]
 
 global_query = 'https://newsdata.io/api/1/news?apikey=pub_43968e5821025873d5aabb7307cf3cbd37046' + news_topic + '&country=au,ca,gb,us&category=politics,world,top'
-entertainment_query = 'https://newsdata.io/api/1/news?apikey=pub_43968e5821025873d5aabb7307cf3cbd37046' + entertainment_topic + '&country=us,uk&category=entertainment,top'
+entertainment_query = 'https://newsdata.io/api/1/news?apikey=pub_43968e5821025873d5aabb7307cf3cbd37046' + entertainment_topic + '&country=us&category=entertainment,top'
 tech_query = 'https://newsdata.io/api/1/news?apikey=pub_43968e5821025873d5aabb7307cf3cbd37046' + tech_topic + '&country=au,ca,gb,us&category=science,technology,top'
-print(global_query)
-print(entertainment_query)
-print(tech_query)
+# print(global_query)
+# print(entertainment_query)
+# print(tech_query)
 
 # Healine search, yt category, playlist id
 cat_list = [['Global News', 'current events', 'PLPbMNnQbsm470OCS_BEpyBfUIaEp7OXLs', global_query], ['Trending Entertainment', 'entertainment', 'PLPbMNnQbsm45zQrO_YJx8WdLHSZK6ZD7W', entertainment_query], 
@@ -42,52 +43,52 @@ cat_list = [['Global News', 'current events', 'PLPbMNnQbsm470OCS_BEpyBfUIaEp7OXL
 def get_news():
     ##################
     # REAL-TIME-NEWS
-    ##################
-    # url = 'https://real-time-news-data.p.rapidapi.com/top-headlines'
-    url = 'https://real-time-news-data.p.rapidapi.com/search'
-    querystring = {"query":item[0],"country":"US","lang":"en"}
-    headers = {
-        "X-RapidAPI-Key": "1a102fb261msh2d806b99ff6302ap13c953jsn29bf8eb677fe",       # Exceeded Quota
-        "X-RapidAPI-Host": "real-time-news-data.p.rapidapi.com"
-    }
-    response = requests.get(url, headers=headers, params=querystring)
-    resp_data = response.json()
-    # with open('test.json', 'w') as f:
-    #     f.write(response.text)
+    # ##################
+    # # url = 'https://real-time-news-data.p.rapidapi.com/top-headlines'
+    # url = 'https://real-time-news-data.p.rapidapi.com/search'
+    # querystring = {"query":item[0],"country":"US","lang":"en"}
+    # headers = {
+    #     "X-RapidAPI-Key": "1a102fb261msh2d806b99ff6302ap13c953jsn29bf8eb677fe",       # Exceeded Quota
+    #     "X-RapidAPI-Host": "real-time-news-data.p.rapidapi.com"
+    # }
+    # response = requests.get(url, headers=headers, params=querystring)
+    # resp_data = response.json()
+    # # with open('test.json', 'w') as f:
+    # #     f.write(response.text)
 
-    try:
-        # Save article and title info
-        # print(resp_data)
-        title = str(today) + '- ' + resp_data['data'][0]['title']
-        article = resp_data['data'][0]['link']
-        author = resp_data['data'][0]['author']
-        return([title, article, author])
-    except:
-        print('Real-Time News error')
-        with open('log.txt', 'w') as f:
-            f.write('\nReal-Time News error')
+    # try:
+    #     # Save article and title info
+    #     # print(resp_data)
+    #     title = str(today) + '- ' + resp_data['data'][0]['title']
+    #     article = resp_data['data'][0]['link']
+    #     author = resp_data['data'][0]['author']
+    #     return([title, article, author])
+    # except:
+    #     print('Real-Time News error')
+    #     with open('log.txt', 'w') as f:
+    #         f.write('\nReal-Time News error')
 
     ##################
     # GOOGLE-NEWS
     ##################
-    url = "https://google-news13.p.rapidapi.com/" + item[1]
-    querystring = {"lr":"en-US"}
-    headers = {
-        "X-RapidAPI-Key": "1a102fb261msh2d806b99ff6302ap13c953jsn29bf8eb677fe",       # Other API Exceeded
-        "X-RapidAPI-Host": "google-news13.p.rapidapi.com"
-    }
-    response = requests.get(url, headers=headers, params=querystring)
-    resp_data = response.json()
-    # print(resp_data)
-    try:
-        title = str(today) + '- ' + resp_data['items'][0]['title']
-        article = resp_data['items'][0]['newsUrl']
-        author = resp_data['items'][0]['publisher']
-        return([title, article, author])
-    except:
-        print('\nGoogle News error')
-        with open('log.txt', 'w') as f:
-            f.write('\nGoogle News error')
+    # url = "https://google-news13.p.rapidapi.com/" + item[1]
+    # querystring = {"lr":"en-US"}
+    # headers = {
+    #     "X-RapidAPI-Key": "1a102fb261msh2d806b99ff6302ap13c953jsn29bf8eb677fe",       # Other API Exceeded
+    #     "X-RapidAPI-Host": "google-news13.p.rapidapi.com"
+    # }
+    # response = requests.get(url, headers=headers, params=querystring)
+    # resp_data = response.json()
+    # # print(resp_data)
+    # try:
+    #     title = str(today) + '- ' + resp_data['items'][0]['title']
+    #     article = resp_data['items'][0]['newsUrl']
+    #     author = resp_data['items'][0]['publisher']
+    #     return([title, article, author])
+    # except:
+    #     print('\nGoogle News error')
+    #     with open('log.txt', 'w') as f:
+    #         f.write('\nGoogle News error')
 
     ##################
     # NEWS_DATA
@@ -142,7 +143,7 @@ def summarize(article):
     try:
         description = resp_data['summary'] + '\nArticle Referenced: ' + article
     except:
-        description = title + '\nArticle Referenced: ' + article
+        description = 'Article Referenced: ' + article
     return description
 
 #################################

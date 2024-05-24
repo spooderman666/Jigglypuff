@@ -1,14 +1,35 @@
 from simple_youtube_api.Channel import Channel
 from simple_youtube_api.LocalVideo import LocalVideo
+from moviepy.editor import VideoFileClip, concatenate_videoclips
 
+absolute_path = '/home/vector/vsCode/jigglypuff/'
+
+##################################################################
+# Add trimmed JigglyPuff song to the end of videos
+##################################################################
+def merge_videos(vid_name):
+    print('Adding Jigglypuff Song. . .')
+    video_file_list = [absolute_path + vid_name, absolute_path + 'jiggle_song.mp4']
+    loaded_video_list = []
+    for video in video_file_list:
+        print(f"Adding video file:{video}")
+        loaded_video_list.append(VideoFileClip(video))
+    final_clip = concatenate_videoclips(loaded_video_list, method='compose')
+    merged_video_name = vid_name + '_merged'
+    final_clip.write_videofile(f"{merged_video_name}.mp4")
+
+##################################################################
+# Upload to youtube
+##################################################################
 def upload_video(title, description, category, vid_name, playlist_id, tags): 
+    merge_videos(vid_name=vid_name)
     print('Uploading. . .')
     # loggin into the channel
     channel = Channel()
     channel.login(absolute_path + "client_secret.json", absolute_path + "storage_path")
 
     # setting up the video that is going to be uploaded
-    video = LocalVideo(file_path = absolute_path + vid_name)
+    video = LocalVideo(file_path = absolute_path + vid_name + '_merged.mp4')
 
     # setting snippet
     if(len(title) > 100):
