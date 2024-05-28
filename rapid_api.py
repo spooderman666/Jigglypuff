@@ -10,7 +10,7 @@ yesterday = today - timedelta(days=1)
 with open('log.txt', 'w') as f:
     f.write(str(datetime.now()))
 
-news_topics = ['&q=russia and ukraine', '&q=middle east',  '']
+news_topics = ['&q=russia and ukraine', '&q=middle east',  '&q=news']
 entertainment_topics = ['&q=hollywood', '&q=upcoming movies',  '']
 tech_topics = ['&q=artificial intelligence', '&q=electric vehicles',  '']
 if(hour == 6):
@@ -26,9 +26,9 @@ else:
     entertainment_topic = entertainment_topics[2]
     tech_topic = tech_topics[2]
 
-global_query = 'https://newsdata.io/api/1/news?apikey=pub_43968e5821025873d5aabb7307cf3cbd37046' + news_topic + '&country=au,ca,gb,us&category=politics,world,top'
-entertainment_query = 'https://newsdata.io/api/1/news?apikey=pub_43968e5821025873d5aabb7307cf3cbd37046' + entertainment_topic + '&country=us&category=entertainment,top'
-tech_query = 'https://newsdata.io/api/1/news?apikey=pub_43968e5821025873d5aabb7307cf3cbd37046' + tech_topic + '&country=au,ca,gb,us&category=science,technology,top'
+global_query = 'https://newsdata.io/api/1/news?apikey=pub_43968e5821025873d5aabb7307cf3cbd37046' + news_topic + '&country=au,ca,gb,us&category=politics,world,top&language=en'
+entertainment_query = 'https://newsdata.io/api/1/news?apikey=pub_43968e5821025873d5aabb7307cf3cbd37046' + entertainment_topic + '&country=us&category=entertainment&language=en'
+tech_query = 'https://newsdata.io/api/1/news?apikey=pub_43968e5821025873d5aabb7307cf3cbd37046' + tech_topic + '&country=au,ca,gb,us&category=science,technology&language=en'
 # print(global_query)
 # print(entertainment_query)
 # print(tech_query)
@@ -93,13 +93,14 @@ def get_news():
     ##################
     # NEWS_DATA
     ##################
+    print(item[3])
     response = requests.get(item[3])
     result = response.json()
 
     with open('test.json', 'w') as f:
         f.write(response.text)
     try:
-        title = str(today) + ': ' + item[0] + ", " + result['results'][0]['title']
+        title = str(today) + ': ' + result['results'][0]['title']
         article = result['results'][0]['link']
         # Save article author
         if('creator' in result['results'][0]):
@@ -116,7 +117,7 @@ def get_news():
         else:
             author = 'Author Unknown'
         summary = result['results'][0]['description']
-        return([title, article, author, tags])
+        return([title, article, author, tags, summary])
     except:
         print('\nNEWS_DATA error')
         with open('log.txt', 'w') as f:
@@ -126,7 +127,7 @@ def get_news():
 ###########################
 # Summarize news article for description
 ###########################
-def summarize(article):
+def summarize(article, summary):
     with open('log.txt', 'a') as f:
         f.write('\nSummarizing. . .')
     url = "https://article-extractor-and-summarizer.p.rapidapi.com/summarize"
@@ -143,19 +144,63 @@ def summarize(article):
     try:
         description = resp_data['summary'] + '\nArticle Referenced: ' + article
     except:
-        description = 'Article Referenced: ' + article
+        if(summary != None):
+            description = summary + '. Article Referenced: ' + article
+        else:
+            description = 'Article Referenced: ' + article
     return description
 
 #################################
 # Search for related TikTok
 #################################
 def get_tiktok(title, description):
+    # with open('log.txt', 'a') as f:
+    #     f.write('\nSearching related tiktoks. . .')
+    # url = "https://tiktok-video-no-watermark10.p.rapidapi.com/index/Tiktok/searchVideoListByKeywords"
+    # querystring = {"keywords":title,"cursor":"0","region":"US","publish_time":"1","count":"2","sort_type":"0"}
+    # headers = {
+	# "X-RapidAPI-Key": "1a102fb261msh2d806b99ff6302ap13c953jsn29bf8eb677fe",
+	# "X-RapidAPI-Host": "tiktok-video-no-watermark10.p.rapidapi.com"
+    # }
+    # response = requests.get(url, headers=headers, params=querystring)
+    # tiktok_data = response.json()
+    # # print(tiktok_data)
+
+    # # Find a related tiktok and save the creator's name if it's there
+    # try:
+    #     creator = "@" + tiktok_data['data']['videos'][0]['author']['unique_id']
+    # except:
+    #     print('index out of range, skipping no creator')
+    #     with open('log.txt', 'a') as f:
+    #         f.write('\nindex out of range, skipping no creator')
+    
+    # # Save the tiktok video as the category name if there's a response
+    # try:
+    #     vid_name = item[0] + '.mp4'
+    #     # print(tiktok_data['data']['videos'][0]['play'])
+    #     r = requests.get(tiktok_data['data']['videos'][0]['play'], stream=True)
+    #     if r.status_code == 200:
+    #         with open(absolute_path + vid_name, 'wb') as f:
+    #             r.raw.decode_content = True
+    #             shutil.copyfileobj(r.raw, f)
+
+    #     description = description + '\nContent Creator: ' + creator
+    #     return([description, vid_name])
+    # except:
+    #     print('index out of range, skipping entire video')
+    #     with open('\nlog.txt', 'a') as f:
+    #         f.write('index out of range, skipping entire video')
+    #     return(['Skipped'])
+
+    ####################
+    # Expired
+    ####################
     with open('log.txt', 'a') as f:
         f.write('\nSearching related tiktoks. . .')
     url = 'https://tiktok-scraper7.p.rapidapi.com/feed/search'
     querystring = {"keywords":title,"region":"us","count":"2","cursor":"0","publish_time":"0","sort_type":"0"}
     headers = {
-        "X-RapidAPI-Key": "1a102fb261msh2d806b99ff6302ap13c953jsn29bf8eb677fe",
+        "X-RapidAPI-Key": "d599bf3470msh8e40da6c14c8729p19ea57jsn68278c03d12f",
         "X-RapidAPI-Host": "tiktok-scraper7.p.rapidapi.com"
     }
     response = requests.get(url, headers=headers, params=querystring)
@@ -192,7 +237,8 @@ def get_tiktok(title, description):
 for item in cat_list:
     with open('log.txt', 'a') as f:
         f.write('\nSearching news headlines. . .')
-    print('Searching news headlines. . .')
+    print('Searching news headlines. . .' + item[0])
+
     # Search 3 different APIs and return the title, link, and author of whichever one has a response
     news_resp = get_news()
     if(news_resp[0] != 'Error'):
@@ -200,25 +246,22 @@ for item in cat_list:
         article = news_resp[1]
         author = news_resp[2]
         tags = news_resp[3]
+        summary = news_resp[4]
 
         with open('log.txt', 'a') as f:
             f.write('\nSummarizing. . .')
         print('Summarizing. . .')
         # Use the link from the headline found and summarize the article
-        description = summarize(article)
+        description = summarize(article, summary)
 
         with open('log.txt', 'a') as f:
             f.write('\nSearching related tiktoks. . .')
         print('Searching related tiktoks. . .')
         # Find and save tiktok video based on the title, update the description with the creator info
         tiktok_resp = get_tiktok(title, description)
+        print(title)
+        print(description)
         if(len(tiktok_resp) > 1):
             description = tiktok_resp[0]
             vid_name = tiktok_resp[1]
-            print(title)
-            print(description)
             upload_video(title=title, description=description, category='technology', vid_name=vid_name, playlist_id=item[2], tags=tags)
-
-    
-
-    
