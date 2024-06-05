@@ -34,62 +34,13 @@ tech_query = 'https://newsdata.io/api/1/news?apikey=pub_43968e5821025873d5aabb73
 # print(tech_query)
 
 # Healine search, yt category, playlist id
-cat_list = [['Global News', 'current events', 'PLPbMNnQbsm470OCS_BEpyBfUIaEp7OXLs', global_query], ['Trending Entertainment', 'entertainment', 'PLPbMNnQbsm45zQrO_YJx8WdLHSZK6ZD7W', entertainment_query], 
-            ['Trending Technology', 'technology', 'PLPbMNnQbsm45AZufdiRnjikkx8FZn5Lk8', tech_query]]
+cat_list = [['Global News', 'PLPbMNnQbsm470OCS_BEpyBfUIaEp7OXLs', global_query], ['Trending Entertainment', 'PLPbMNnQbsm45zQrO_YJx8WdLHSZK6ZD7W', entertainment_query], 
+            ['Trending Technology', 'PLPbMNnQbsm45AZufdiRnjikkx8FZn5Lk8', tech_query]]
 
 #################################
 # Search for top headlines
 #################################
 def get_news():
-    ##################
-    # REAL-TIME-NEWS
-    # ##################
-    # # url = 'https://real-time-news-data.p.rapidapi.com/top-headlines'
-    # url = 'https://real-time-news-data.p.rapidapi.com/search'
-    # querystring = {"query":item[0],"country":"US","lang":"en"}
-    # headers = {
-    #     "X-RapidAPI-Key": "1a102fb261msh2d806b99ff6302ap13c953jsn29bf8eb677fe",       # Exceeded Quota
-    #     "X-RapidAPI-Host": "real-time-news-data.p.rapidapi.com"
-    # }
-    # response = requests.get(url, headers=headers, params=querystring)
-    # resp_data = response.json()
-    # # with open('test.json', 'w') as f:
-    # #     f.write(response.text)
-
-    # try:
-    #     # Save article and title info
-    #     # print(resp_data)
-    #     title = str(today) + '- ' + resp_data['data'][0]['title']
-    #     article = resp_data['data'][0]['link']
-    #     author = resp_data['data'][0]['author']
-    #     return([title, article, author])
-    # except:
-    #     print('Real-Time News error')
-    #     with open('log.txt', 'w') as f:
-    #         f.write('\nReal-Time News error')
-
-    ##################
-    # GOOGLE-NEWS
-    ##################
-    # url = "https://google-news13.p.rapidapi.com/" + item[1]
-    # querystring = {"lr":"en-US"}
-    # headers = {
-    #     "X-RapidAPI-Key": "1a102fb261msh2d806b99ff6302ap13c953jsn29bf8eb677fe",       # Other API Exceeded
-    #     "X-RapidAPI-Host": "google-news13.p.rapidapi.com"
-    # }
-    # response = requests.get(url, headers=headers, params=querystring)
-    # resp_data = response.json()
-    # # print(resp_data)
-    # try:
-    #     title = str(today) + '- ' + resp_data['items'][0]['title']
-    #     article = resp_data['items'][0]['newsUrl']
-    #     author = resp_data['items'][0]['publisher']
-    #     return([title, article, author])
-    # except:
-    #     print('\nGoogle News error')
-    #     with open('log.txt', 'w') as f:
-    #         f.write('\nGoogle News error')
-
     ##################
     # NEWS_DATA
     ##################
@@ -120,7 +71,7 @@ def get_news():
         return([title, article, author, tags, summary])
     except:
         print('\nNEWS_DATA error')
-        with open('log.txt', 'w') as f:
+        with open('log.txt', 'a') as f:
             f.write('\nNEWS_DATA error')
         return(['Error'])
 
