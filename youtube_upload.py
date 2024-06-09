@@ -10,8 +10,8 @@ absolute_path = '/home/vector/vsCode/jigglypuff/'
 ##################################################################
 def merge_videos(vid_name):
     print('Adding Jigglypuff Song. . .')
-    with open('log.txt', 'a') as f:
-        f.write('Adding Jigglypuff Song. . .')
+    with open('/home/vector/vsCode/jigglypuff/log.txt', 'a') as f:
+        f.write('\nAdding Jigglypuff Song. . .')
     video_file_list = [absolute_path + vid_name, absolute_path + 'jiggle_song.mp4']
     loaded_video_list = []
     for video in video_file_list:
@@ -19,7 +19,7 @@ def merge_videos(vid_name):
         loaded_video_list.append(VideoFileClip(video))
     final_clip = concatenate_videoclips(loaded_video_list, method='compose')
     merged_video_name = vid_name + '_merged'
-    final_clip.write_videofile(f"{merged_video_name}.mp4")
+    final_clip.write_videofile(absolute_path + f"{merged_video_name}.mp4")
 
 ##################################################################
 # Upload to youtube
@@ -27,8 +27,8 @@ def merge_videos(vid_name):
 def upload_video(title, description, category, vid_name, playlist_id, tags): 
     merge_videos(vid_name=vid_name)
     print('Uploading. . .')
-    with open('log.txt', 'a') as f:
-        f.write('Uploading. . .')
+    with open('/home/vector/vsCode/jigglypuff/log.txt', 'a') as f:
+        f.write('\nUploading. . .')
     # loggin into the channel
     channel = Channel()
     channel.login(absolute_path + "client_secret.json", absolute_path + "storage_path")
@@ -67,14 +67,16 @@ def upload_video(title, description, category, vid_name, playlist_id, tags):
     except:
         # print('playlist error')
         print(video)
-        with open('log.txt', 'a') as f:
-            f.write(video)
+        with open('/home/vector/vsCode/jigglypuff/log.txt', 'a') as f:
+            f.write('\nerror?')
     # channel.add_video_to_playlist(video=video, playlist_id=playlist_id)
 
     # liking video
     # video.like()
 
     # Remove all videos except jiggly
+    with open('/home/vector/vsCode/jigglypuff/log.txt', 'a') as f:
+        f.write('\nCleaning. . .')
     files = os.listdir()
     for file in files:
         if(file.endswith('.mp4') and file != 'jiggle_song.mp4'):
