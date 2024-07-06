@@ -3,14 +3,14 @@ from simple_youtube_api.Channel import Channel
 from simple_youtube_api.LocalVideo import LocalVideo
 from moviepy.editor import VideoFileClip, concatenate_videoclips
 
-absolute_path = '/home/vector/vsCode/jigglypuff/'
+absolute_path = '/home/vector/vsCode/Jigglypuff/'
 
 ##################################################################
-# Add trimmed JigglyPuff song to the end of videos
+# Add trimmed Jigglypuff song to the end of videos
 ##################################################################
 def merge_videos(vid_name):
     print('Adding Jigglypuff Song. . .')
-    with open('/home/vector/vsCode/jigglypuff/log.txt', 'a') as f:
+    with open('/home/vector/vsCode/Jigglypuff/log.txt', 'a') as f:
         f.write('\nAdding Jigglypuff Song. . .')
     video_file_list = [absolute_path + vid_name, absolute_path + 'jiggle_song.mp4']
     loaded_video_list = []
@@ -27,7 +27,7 @@ def merge_videos(vid_name):
 def upload_video(title, description, category, vid_name, playlist_id, tags): 
     merge_videos(vid_name=vid_name)
     print('Uploading. . .')
-    with open('/home/vector/vsCode/jigglypuff/log.txt', 'a') as f:
+    with open('/home/vector/vsCode/Jigglypuff/log.txt', 'a') as f:
         f.write('\nUploading. . .')
     # loggin into the channel
     channel = Channel()
@@ -67,7 +67,7 @@ def upload_video(title, description, category, vid_name, playlist_id, tags):
     except:
         # print('playlist error')
         print(video)
-        with open('/home/vector/vsCode/jigglypuff/log.txt', 'a') as f:
+        with open('/home/vector/vsCode/Jigglypuff/log.txt', 'a') as f:
             f.write('\nerror?')
     # channel.add_video_to_playlist(video=video, playlist_id=playlist_id)
 
@@ -75,7 +75,7 @@ def upload_video(title, description, category, vid_name, playlist_id, tags):
     # video.like()
 
     # Remove all videos except jiggly
-    with open('/home/vector/vsCode/jigglypuff/log.txt', 'a') as f:
+    with open('/home/vector/vsCode/Jigglypuff/log.txt', 'a') as f:
         f.write('\nCleaning. . .')
     files = os.listdir()
     for file in files:

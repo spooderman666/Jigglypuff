@@ -4,11 +4,11 @@ import shutil
 from datetime import datetime, timedelta
 from youtube_upload import upload_video
 
-absolute_path = '/home/vector/vsCode/jigglypuff/'
+absolute_path = '/home/vector/vsCode/Jigglypuff/'
 today = datetime.now().date()
 hour = datetime.now().hour
 yesterday = today - timedelta(days=1)
-with open('/home/vector/vsCode/jigglypuff/log.txt', 'w') as f:
+with open('/home/vector/vsCode/Jigglypuff/log.txt', 'w') as f:
     f.write(str(datetime.now()))
 
 # Use a random number generator to pick the topics to query
@@ -39,7 +39,7 @@ def get_news():
     ##################
     # NEWS_DATA
     ##################
-    with open('/home/vector/vsCode/jigglypuff/log.txt', 'a') as f:
+    with open('/home/vector/vsCode/Jigglypuff/log.txt', 'a') as f:
         f.write('\n' + item[2])
     print(item[2])
     response = requests.get(item[2])
@@ -67,12 +67,12 @@ def get_news():
             author = 'Author Unknown'
         summary = result['results'][0]['description']
 
-        with open('/home/vector/vsCode/jigglypuff/log.txt', 'a') as f:
+        with open('/home/vector/vsCode/Jigglypuff/log.txt', 'a') as f:
             f.write('\n' + title)
         return([title, article, author, tags, summary])
     except:
         print('\nNEWS_DATA error')
-        with open('/home/vector/vsCode/jigglypuff/log.txt', 'a') as f:
+        with open('/home/vector/vsCode/Jigglypuff/log.txt', 'a') as f:
             f.write('\nNEWS_DATA error')
         return(['Error'])
 
@@ -80,80 +80,39 @@ def get_news():
 # Summarize news article for description
 ###########################
 def summarize(article, summary):
-    with open('/home/vector/vsCode/jigglypuff/log.txt', 'a') as f:
+    with open('/home/vector/vsCode/Jigglypuff/log.txt', 'a') as f:
         f.write('\nSummarizing. . .')
-    url = "https://article-extractor-and-summarizer.p.rapidapi.com/summarize"
-    querystring = {"url": article,"length":"1"}
-    headers = {
-        "X-RapidAPI-Key": "1a102fb261msh2d806b99ff6302ap13c953jsn29bf8eb677fe",
-        "X-RapidAPI-Host": "article-extractor-and-summarizer.p.rapidapi.com"
-    }
-    response = requests.get(url, headers=headers, params=querystring)
-    resp_data = response.json()
+    # url = "https://article-extractor-and-summarizer.p.rapidapi.com/summarize"
+    # querystring = {"url": article,"length":"1"}
+    # headers = {
+    #     "X-RapidAPI-Key": "1a102fb261msh2d806b99ff6302ap13c953jsn29bf8eb677fe",
+    #     "X-RapidAPI-Host": "article-extractor-and-summarizer.p.rapidapi.com"
+    # }
+    # response = requests.get(url, headers=headers, params=querystring)
+    # resp_data = response.json()
     # print(resp_data)
 
     # If a summary is made save that as the video description, if not skip it
-    try:
-        description = resp_data['summary'] + '\nArticle Referenced: ' + article
-    except:
-        if(summary != None):
-            description = summary + '. Article Referenced: ' + article
-        else:
-            description = 'Article Referenced: ' + article
+    # try:
+    #     description = resp_data['summary'] + '\nArticle Referenced: ' + article
+    # except:
+    if(summary != None):
+        description = summary + '. Article Referenced: ' + article
+    else:
+        description = 'Article Referenced: ' + article
     return description
 
 #################################
 # Search for related TikTok
 #################################
 def get_tiktok(title, description):
-    # with open('/home/vector/vsCode/jigglypuff/log.txt', 'a') as f:
-    #     f.write('\nSearching related tiktoks. . .')
-    # url = "https://tiktok-video-no-watermark10.p.rapidapi.com/index/Tiktok/searchVideoListByKeywords"
-    # querystring = {"keywords":title,"cursor":"0","region":"US","publish_time":"1","count":"2","sort_type":"0"}
-    # headers = {
-	# "X-RapidAPI-Key": "1a102fb261msh2d806b99ff6302ap13c953jsn29bf8eb677fe",
-	# "X-RapidAPI-Host": "tiktok-video-no-watermark10.p.rapidapi.com"
-    # }
-    # response = requests.get(url, headers=headers, params=querystring)
-    # tiktok_data = response.json()
-    # # print(tiktok_data)
-
-    # # Find a related tiktok and save the creator's name if it's there
-    # try:
-    #     creator = "@" + tiktok_data['data']['videos'][0]['author']['unique_id']
-    # except:
-    #     print('index out of range, skipping no creator')
-    #     with open('/home/vector/vsCode/jigglypuff/log.txt', 'a') as f:
-    #         f.write('\nindex out of range, skipping no creator')
-    
-    # # Save the tiktok video as the category name if there's a response
-    # try:
-    #     vid_name = item[0] + '.mp4'
-    #     # print(tiktok_data['data']['videos'][0]['play'])
-    #     r = requests.get(tiktok_data['data']['videos'][0]['play'], stream=True)
-    #     if r.status_code == 200:
-    #         with open(absolute_path + vid_name, 'wb') as f:
-    #             r.raw.decode_content = True
-    #             shutil.copyfileobj(r.raw, f)
-
-    #     description = description + '\nContent Creator: ' + creator
-    #     return([description, vid_name])
-    # except:
-    #     print('index out of range, skipping entire video')
-    #     with open('\n/home/vector/vsCode/jigglypuff/log.txt', 'a') as f:
-    #         f.write('index out of range, skipping entire video')
-    #     return(['Skipped'])
-
-    ####################
-    # Expired
-    ####################
-    with open('/home/vector/vsCode/jigglypuff/log.txt', 'a') as f:
+    with open('/home/vector/vsCode/Jigglypuff/log.txt', 'a') as f:
         f.write('\nSearching related tiktoks. . .')
-    url = 'https://tiktok-scraper7.p.rapidapi.com/feed/search'
-    querystring = {"keywords":title,"region":"us","count":"2","cursor":"0","publish_time":"0","sort_type":"0"}
+    url = "https://tiktok-video-no-watermark10.p.rapidapi.com/index/Tiktok/searchVideoListByKeywords"
+    querystring = {"keywords":title,"cursor":"0","region":"US","publish_time":"1","count":"2","sort_type":"0"}
     headers = {
-        "X-RapidAPI-Key": "d599bf3470msh8e40da6c14c8729p19ea57jsn68278c03d12f",
-        "X-RapidAPI-Host": "tiktok-scraper7.p.rapidapi.com"
+	"X-RapidAPI-Key": "1a102fb261msh2d806b99ff6302ap13c953jsn29bf8eb677fe",
+	"X-RapidAPI-Host": "tiktok-video-no-watermark10.p.rapidapi.com"
     }
     response = requests.get(url, headers=headers, params=querystring)
     tiktok_data = response.json()
@@ -161,15 +120,14 @@ def get_tiktok(title, description):
 
     # Find a related tiktok and save the creator's name if it's there
     try:
-        creator = "@" + tiktok_data['data']['videos'][0]['author']['unique_id'] + ' (' + tiktok_data['data']['videos'][0]['author']['nickname'] + ')'
+        creator = "@" + tiktok_data['data']['videos'][0]['author']['unique_id']
     except:
         print('index out of range, skipping no creator')
-        with open('/home/vector/vsCode/jigglypuff/log.txt', 'a') as f:
+        with open('/home/vector/vsCode/Jigglypuff/log.txt', 'a') as f:
             f.write('\nindex out of range, skipping no creator')
     
     # Save the tiktok video as the category name if there's a response
     try:
-        # vid_name = item[0] + '.mp4'
         vid_name = 'to_upload.mp4'
         # print(tiktok_data['data']['videos'][0]['play'])
         r = requests.get(tiktok_data['data']['videos'][0]['play'], stream=True)
@@ -182,13 +140,55 @@ def get_tiktok(title, description):
         return([description, vid_name])
     except:
         print('index out of range, skipping entire video')
-        with open('/home/vector/vsCode/jigglypuff/log.txt', 'a') as f:
-            f.write('\nindex out of range, skipping entire video')
+        with open('/home/vector/vsCode/Jigglypuff/log.txt', 'a') as f:
+            f.write('index out of range, skipping entire video')
         return(['Skipped'])
+
+    ####################
+    # Expired
+    ####################
+    # with open('/home/vector/vsCode/Jigglypuff/log.txt', 'a') as f:
+    #     f.write('\nSearching related tiktoks. . .')
+    # url = 'https://tiktok-scraper7.p.rapidapi.com/feed/search'
+    # querystring = {"keywords":title,"region":"us","count":"2","cursor":"0","publish_time":"0","sort_type":"0"}
+    # headers = {
+    #     "X-RapidAPI-Key": "d599bf3470msh8e40da6c14c8729p19ea57jsn68278c03d12f",
+    #     "X-RapidAPI-Host": "tiktok-scraper7.p.rapidapi.com"
+    # }
+    # response = requests.get(url, headers=headers, params=querystring)
+    # tiktok_data = response.json()
+    # # print(tiktok_data)
+
+    # # Find a related tiktok and save the creator's name if it's there
+    # try:
+    #     creator = "@" + tiktok_data['data']['videos'][0]['author']['unique_id'] + ' (' + tiktok_data['data']['videos'][0]['author']['nickname'] + ')'
+    # except:
+    #     print('index out of range, skipping no creator')
+    #     with open('/home/vector/vsCode/Jigglypuff/log.txt', 'a') as f:
+    #         f.write('\nindex out of range, skipping no creator')
+    
+    # # Save the tiktok video as the category name if there's a response
+    # try:
+    #     # vid_name = item[0] + '.mp4'
+    #     vid_name = 'to_upload.mp4'
+    #     # print(tiktok_data['data']['videos'][0]['play'])
+    #     r = requests.get(tiktok_data['data']['videos'][0]['play'], stream=True)
+    #     if r.status_code == 200:
+    #         with open(absolute_path + vid_name, 'wb') as f:
+    #             r.raw.decode_content = True
+    #             shutil.copyfileobj(r.raw, f)
+
+    #     description = description + '\nContent Creator: ' + creator
+    #     return([description, vid_name])
+    # except:
+    #     print('index out of range, skipping entire video')
+    #     with open('/home/vector/vsCode/Jigglypuff/log.txt', 'a') as f:
+    #         f.write('\nindex out of range, skipping entire video')
+    #     return(['Skipped'])
 
 # Loop the 2D-Array searching for articles from General, Entertainment, and Tech categories then send them to youtube
 for item in cat_list:
-    with open('/home/vector/vsCode/jigglypuff/log.txt', 'a') as f:
+    with open('/home/vector/vsCode/Jigglypuff/log.txt', 'a') as f:
         f.write('\nSearching news headlines. . .' + item[0])
     print('Searching news headlines. . .' + item[0])
 
