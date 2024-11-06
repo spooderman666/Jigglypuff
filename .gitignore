@@ -1,8 +1,10 @@
 *.json
-*.txt
 *.mp4
 storage_path
 test*
 
-tiktok_app
-hypno
+log.txt
+notes.txt
+.env
+graphs/*
+dependencies

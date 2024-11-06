@@ -10,11 +10,11 @@ hour = datetime.now().hour
 yesterday = today - timedelta(days=1)
 with open('/home/vector/vsCode/Jigglypuff/log.txt', 'w') as f:
     f.write(str(datetime.now()))
-
+    
 # Use a random number generator to pick the topics to query
-news_topics = ['&q=russia and ukraine', '&q=middle east',  '&q=news']
-entertainment_topics = ['&q=hollywood', '&q=upcoming movies',  '']
-tech_topics = ['&q=artificial intelligence', '&q=electric vehicles',  '']
+news_topics = ['&q=football', '&q=celebrity news',  '&q=jeopardy']
+entertainment_topics = ['&q=The Bachelorette', '&q=movies',  '&q=Royal Family']
+tech_topics = ['&q=apple', '&q=samsung',  '&q=meta']
 list = [0, 1, 2]
 topic_index = random.choice(list)
 news_topic = news_topics[topic_index]
