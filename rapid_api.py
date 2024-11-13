@@ -1,14 +1,22 @@
 import requests
 import random
 import shutil
+import os
 from datetime import datetime, timedelta
+from dotenv import load_dotenv
+
 from youtube_upload import upload_video
 
-absolute_path = '/home/vector/vsCode/Jigglypuff/'
+# Set environment variables and global variables
+load_dotenv()
+YT_API_KEY = os.getenv('YT_ECHO_API_KEY')
+NEWS_API_KEY = os.getenv('NEWS_API_KEY')
+LOG_PATH = '/home/vector/vsCode/Jigglypuff/log_api.log'
+absolute_path = os.getenv('ABSOLUTE_PATH')
 today = datetime.now().date()
 hour = datetime.now().hour
 yesterday = today - timedelta(days=1)
-with open('/home/vector/vsCode/Jigglypuff/log.txt', 'w') as f:
+with open(LOG_PATH, 'w') as f:
     f.write(str(datetime.now()))
     
 # Use a random number generator to pick the topics to query
@@ -21,9 +29,9 @@ news_topic = news_topics[topic_index]
 entertainment_topic = entertainment_topics[topic_index]
 tech_topic = tech_topics[topic_index]
 
-global_query = 'https://newsdata.io/api/1/news?apikey=pub_43968e5821025873d5aabb7307cf3cbd37046' + news_topic + '&country=au,ca,gb,us&category=politics,world,top&language=en'
-entertainment_query = 'https://newsdata.io/api/1/news?apikey=pub_43968e5821025873d5aabb7307cf3cbd37046' + entertainment_topic + '&country=us&category=entertainment&language=en'
-tech_query = 'https://newsdata.io/api/1/news?apikey=pub_43968e5821025873d5aabb7307cf3cbd37046' + tech_topic + '&country=au,ca,gb,us&category=science,technology&language=en'
+global_query = f"https://newsdata.io/api/1/news?apikey={NEWS_API_KEY}{news_topic}&country=au,ca,gb,us&category=politics,world,top&language=en"
+entertainment_query = f"https://newsdata.io/api/1/news?apikey={NEWS_API_KEY}{entertainment_topic}&country=us&category=entertainment&language=en"
+tech_query = f"https://newsdata.io/api/1/news?apikey={NEWS_API_KEY}{tech_topic}&country=au,ca,gb,us&category=science,technology&language=en"
 # print(global_query)
 # print(entertainment_query)
 # print(tech_query)
@@ -39,7 +47,7 @@ def get_news():
     ##################
     # NEWS_DATA
     ##################
-    with open('/home/vector/vsCode/Jigglypuff/log.txt', 'a') as f:
+    with open(LOG_PATH, 'a') as f:
         f.write('\n' + item[2])
     print(item[2])
     response = requests.get(item[2])
@@ -67,12 +75,12 @@ def get_news():
             author = 'Author Unknown'
         summary = result['results'][0]['description']
 
-        with open('/home/vector/vsCode/Jigglypuff/log.txt', 'a') as f:
+        with open(LOG_PATH, 'a') as f:
             f.write('\n' + title)
         return([title, article, author, tags, summary])
     except:
         print('\nNEWS_DATA error')
-        with open('/home/vector/vsCode/Jigglypuff/log.txt', 'a') as f:
+        with open(LOG_PATH, 'a') as f:
             f.write('\nNEWS_DATA error')
         return(['Error'])
 
@@ -80,7 +88,7 @@ def get_news():
 # Summarize news article for description
 ###########################
 def summarize(article, summary):
-    with open('/home/vector/vsCode/Jigglypuff/log.txt', 'a') as f:
+    with open(LOG_PATH, 'a') as f:
         f.write('\nSummarizing. . .')
     # url = "https://article-extractor-and-summarizer.p.rapidapi.com/summarize"
     # querystring = {"url": article,"length":"1"}
@@ -106,7 +114,7 @@ def summarize(article, summary):
 # Search for related TikTok
 #################################
 def get_tiktok(title, description):
-    with open('/home/vector/vsCode/Jigglypuff/log.txt', 'a') as f:
+    with open(LOG_PATH, 'a') as f:
         f.write('\nSearching related tiktoks. . .')
     url = "https://tiktok-video-no-watermark10.p.rapidapi.com/index/Tiktok/searchVideoListByKeywords"
     querystring = {"keywords":title,"cursor":"0","region":"US","publish_time":"1","count":"2","sort_type":"0"}
@@ -123,7 +131,7 @@ def get_tiktok(title, description):
         creator = "@" + tiktok_data['data']['videos'][0]['author']['unique_id']
     except:
         print('index out of range, skipping no creator')
-        with open('/home/vector/vsCode/Jigglypuff/log.txt', 'a') as f:
+        with open(LOG_PATH, 'a') as f:
             f.write('\nindex out of range, skipping no creator')
     
     # Save the tiktok video as the category name if there's a response
@@ -140,14 +148,14 @@ def get_tiktok(title, description):
         return([description, vid_name])
     except:
         print('index out of range, skipping entire video')
-        with open('/home/vector/vsCode/Jigglypuff/log.txt', 'a') as f:
+        with open(LOG_PATH, 'a') as f:
             f.write('index out of range, skipping entire video')
         return(['Skipped'])
 
     ####################
     # Expired
     ####################
-    # with open('/home/vector/vsCode/Jigglypuff/log.txt', 'a') as f:
+    # with open(LOG_PATH, 'a') as f:
     #     f.write('\nSearching related tiktoks. . .')
     # url = 'https://tiktok-scraper7.p.rapidapi.com/feed/search'
     # querystring = {"keywords":title,"region":"us","count":"2","cursor":"0","publish_time":"0","sort_type":"0"}
@@ -164,7 +172,7 @@ def get_tiktok(title, description):
     #     creator = "@" + tiktok_data['data']['videos'][0]['author']['unique_id'] + ' (' + tiktok_data['data']['videos'][0]['author']['nickname'] + ')'
     # except:
     #     print('index out of range, skipping no creator')
-    #     with open('/home/vector/vsCode/Jigglypuff/log.txt', 'a') as f:
+    #     with open(LOG_PATH, 'a') as f:
     #         f.write('\nindex out of range, skipping no creator')
     
     # # Save the tiktok video as the category name if there's a response
@@ -182,13 +190,13 @@ def get_tiktok(title, description):
     #     return([description, vid_name])
     # except:
     #     print('index out of range, skipping entire video')
-    #     with open('/home/vector/vsCode/Jigglypuff/log.txt', 'a') as f:
+    #     with open(LOG_PATH, 'a') as f:
     #         f.write('\nindex out of range, skipping entire video')
     #     return(['Skipped'])
 
 # Loop the 2D-Array searching for articles from General, Entertainment, and Tech categories then send them to youtube
 for item in cat_list:
-    with open('/home/vector/vsCode/Jigglypuff/log.txt', 'a') as f:
+    with open(LOG_PATH, 'a') as f:
         f.write('\nSearching news headlines. . .' + item[0])
     print('Searching news headlines. . .' + item[0])
 

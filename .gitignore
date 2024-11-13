@@ -1,9 +1,11 @@
 *.json
+*.log
 *.mp4
 storage_path
 test*
 
-log.txt
+proxies.txt
+geckodriver
 notes.txt
 .env
 graphs/*
