@@ -1,20 +1,22 @@
 import os
+import logging
 from dotenv import load_dotenv
 from simple_youtube_api.Channel import Channel
 from simple_youtube_api.LocalVideo import LocalVideo
 from moviepy.editor import VideoFileClip, concatenate_videoclips
 
-
 load_dotenv()
-absolute_path = os.getenv('ABSOLUTE_PATH')
+LOG_PATH = '/home/vector/vsCode/Jigglypuff/log_api.log'
+logger = logging.getLogger(__name__)
+logging.basicConfig(filename=LOG_PATH, level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+absolute_path = '/home/vector/vsCode/Jigglypuff/'
 
 ##################################################################
 # Add trimmed Jigglypuff song to the end of videos
 ##################################################################
 def merge_videos(vid_name):
     print('Adding Jigglypuff Song. . .')
-    with open('/home/vector/vsCode/Jigglypuff/log_api.txt', 'a') as f:
-        f.write('\nAdding Jigglypuff Song. . .')
+    logger.info('Adding Jigglypuff Song. . .')
     video_file_list = [absolute_path + vid_name, absolute_path + 'jiggle_song.mp4']
     loaded_video_list = []
     for video in video_file_list:
@@ -30,21 +32,20 @@ def merge_videos(vid_name):
 def upload_video(title, description, category, vid_name, playlist_id, tags): 
     merge_videos(vid_name=vid_name)
     print('Uploading. . .')
-    with open('/home/vector/vsCode/Jigglypuff/log_api.txt', 'a') as f:
-        f.write('\nUploading. . .')
+    logger.info('Uploading. . .')
     # loggin into the channel
     channel = Channel()
     channel.login(absolute_path + "client_secret.json", absolute_path + "storage_path")
 
     # setting up the video that is going to be uploaded
-    video = LocalVideo(file_path = absolute_path + vid_name + '_merged.mp4')
+    video = LocalVideo(file_path = absolute_path + vid_name + '_merged.mp4', tags=tags)
 
     # setting snippet
     if(len(title) > 100):
         title = title[0:90] + '...'
     video.set_title(title)
     video.set_description(description)
-    video.set_tags([category])
+    video.set_tags(tags)
     video.set_category(category)
     video.set_default_language("en-US")
     # video.set_playlist(playlist_id)
@@ -70,16 +71,14 @@ def upload_video(title, description, category, vid_name, playlist_id, tags):
     except:
         # print('playlist error')
         print(video)
-        with open('/home/vector/vsCode/Jigglypuff/log_api.txt', 'a') as f:
-            f.write('\nerror?')
+        logger.info('error?')
     # channel.add_video_to_playlist(video=video, playlist_id=playlist_id)
 
     # liking video
     # video.like()
 
     # Remove all videos except jiggly
-    with open('/home/vector/vsCode/Jigglypuff/log_api.txt', 'a') as f:
-        f.write('\nCleaning. . .')
+    logger.info('Cleaning. . .')
     files = os.listdir()
     for file in files:
         if(file.endswith('.mp4') and file != 'jiggle_song.mp4'):

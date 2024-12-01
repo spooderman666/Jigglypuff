@@ -1,6 +1,7 @@
 import requests
 import random
 import shutil
+import logging
 import os
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
@@ -12,17 +13,18 @@ load_dotenv()
 YT_API_KEY = os.getenv('YT_ECHO_API_KEY')
 NEWS_API_KEY = os.getenv('NEWS_API_KEY')
 LOG_PATH = '/home/vector/vsCode/Jigglypuff/log_api.log'
+logger = logging.getLogger(__name__)
+logging.basicConfig(filename=LOG_PATH, level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 absolute_path = os.getenv('ABSOLUTE_PATH')
 today = datetime.now().date()
 hour = datetime.now().hour
 yesterday = today - timedelta(days=1)
-with open(LOG_PATH, 'w') as f:
-    f.write(str(datetime.now()))
+logger.info('New video upload bunch. . .')
     
 # Use a random number generator to pick the topics to query
-news_topics = ['&q=football', '&q=celebrity news',  '&q=jeopardy']
-entertainment_topics = ['&q=The Bachelorette', '&q=movies',  '&q=Royal Family']
-tech_topics = ['&q=apple', '&q=samsung',  '&q=meta']
+news_topics = ['&q=aliens', '&q=celebrity news',  '&q=stocks']
+entertainment_topics = ['&q=jeopardy', '&q=BTS',  '&q=holidays']
+tech_topics = ['&q=apple', '&q=tesla',  '&q=meta']
 list = [0, 1, 2]
 topic_index = random.choice(list)
 news_topic = news_topics[topic_index]
@@ -37,8 +39,8 @@ tech_query = f"https://newsdata.io/api/1/news?apikey={NEWS_API_KEY}{tech_topic}&
 # print(tech_query)
 
 # Healine search, yt category, playlist id
-cat_list = [['Global News', 'PLPbMNnQbsm470OCS_BEpyBfUIaEp7OXLs', global_query], ['Trending Entertainment', 'PLPbMNnQbsm45zQrO_YJx8WdLHSZK6ZD7W', entertainment_query], 
-            ['Trending Technology', 'PLPbMNnQbsm45AZufdiRnjikkx8FZn5Lk8', tech_query]]
+cat_list = [[25, 'PLPbMNnQbsm470OCS_BEpyBfUIaEp7OXLs', global_query], [24, 'PLPbMNnQbsm45zQrO_YJx8WdLHSZK6ZD7W', entertainment_query], 
+            [28, 'PLPbMNnQbsm45AZufdiRnjikkx8FZn5Lk8', tech_query]]
 
 #################################
 # Search for top headlines
@@ -68,7 +70,7 @@ def get_news():
         # Save keywords for video tags
         if('keywords' in result['results'][0]):
             if(result['results'][0]['keywords'] is None):
-                tags = ['technology']
+                tags = ['general']
             else:
                 tags = result['results'][0]['keywords']
         else:
@@ -88,8 +90,7 @@ def get_news():
 # Summarize news article for description
 ###########################
 def summarize(article, summary):
-    with open(LOG_PATH, 'a') as f:
-        f.write('\nSummarizing. . .')
+    logger.info('Summarizing. . .')
     # url = "https://article-extractor-and-summarizer.p.rapidapi.com/summarize"
     # querystring = {"url": article,"length":"1"}
     # headers = {
@@ -114,8 +115,7 @@ def summarize(article, summary):
 # Search for related TikTok
 #################################
 def get_tiktok(title, description):
-    with open(LOG_PATH, 'a') as f:
-        f.write('\nSearching related tiktoks. . .')
+    logger.info('Searching related tik toks. . .')
     url = "https://tiktok-video-no-watermark10.p.rapidapi.com/index/Tiktok/searchVideoListByKeywords"
     querystring = {"keywords":title,"cursor":"0","region":"US","publish_time":"1","count":"2","sort_type":"0"}
     headers = {
@@ -131,8 +131,7 @@ def get_tiktok(title, description):
         creator = "@" + tiktok_data['data']['videos'][0]['author']['unique_id']
     except:
         print('index out of range, skipping no creator')
-        with open(LOG_PATH, 'a') as f:
-            f.write('\nindex out of range, skipping no creator')
+        logger.error('index out of range, skipping. . .')
     
     # Save the tiktok video as the category name if there's a response
     try:
@@ -148,8 +147,7 @@ def get_tiktok(title, description):
         return([description, vid_name])
     except:
         print('index out of range, skipping entire video')
-        with open(LOG_PATH, 'a') as f:
-            f.write('index out of range, skipping entire video')
+        logger.error('index out of range, skipping. . .')
         return(['Skipped'])
 
     ####################
@@ -196,9 +194,20 @@ def get_tiktok(title, description):
 
 # Loop the 2D-Array searching for articles from General, Entertainment, and Tech categories then send them to youtube
 for item in cat_list:
-    with open(LOG_PATH, 'a') as f:
-        f.write('\nSearching news headlines. . .' + item[0])
-    print('Searching news headlines. . .' + item[0])
+    if(item[0] == 25):
+        cat_name = "News & Politics"
+        cat_id = item[0]
+    elif(item[0] == 24):
+        cat_name = "Entertainment"
+        cat_id = item[0]
+    elif(item[0] == 28):
+        cat_name = "Science & Technology"
+        cat_id = item[0]
+    else:
+        cat_name = item[0]
+        cat_id = item[0]
+    print('Searching news headlines. . .' + cat_name)
+    logger.info('Searching news headlines. . .' + cat_name)
 
     # Search 3 different APIs and return the title, link, and author of whichever one has a response
     news_resp = get_news()
@@ -207,6 +216,7 @@ for item in cat_list:
         article = news_resp[1]
         author = news_resp[2]
         tags = news_resp[3]
+        tags.append(cat_name)
         summary = news_resp[4]
 
         print('Summarizing. . .')
@@ -222,4 +232,4 @@ for item in cat_list:
             description = tiktok_resp[0]
             # vid_name = tiktok_resp[1]
             vid_name = 'to_upload.mp4'
-            upload_video(title=title, description=description, category='technology', vid_name=vid_name, playlist_id=item[1], tags=tags)
+            upload_video(title=title, description=description, category=cat_id, vid_name=vid_name, playlist_id=item[1], tags=tags)
