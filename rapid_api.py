@@ -22,8 +22,8 @@ yesterday = today - timedelta(days=1)
 logger.info('New video upload bunch. . .')
     
 # Use a random number generator to pick the topics to query
-news_topics = ['&q=aliens', '&q=celebrity news',  '&q=stocks']
-entertainment_topics = ['&q=jeopardy', '&q=BTS',  '&q=holidays']
+news_topics = ['&q=trending', '&q=celebrity news',  '&q=stocks']
+entertainment_topics = ['&q=bachelorette', '&q=BTS',  '&q=k pop']
 tech_topics = ['&q=apple', '&q=tesla',  '&q=meta']
 list = [0, 1, 2]
 topic_index = random.choice(list)
